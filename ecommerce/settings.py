@@ -105,7 +105,6 @@ USE_TZ = True
 import warnings
 warnings.filterwarnings("ignore", message="No directory at: .*staticfiles")
 
-DISABLE_COLLECTSTATIC = 1
 
 STATIC_URL = '/static/'
 
