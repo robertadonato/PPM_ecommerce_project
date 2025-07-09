@@ -18,37 +18,40 @@ from decimal import Decimal
 
 def home_view(request):
     now = timezone.now()
-    
-    try:
-        confetti_crumbl = {
-            'product': get_object_or_404(Product, id=5),
-            'offer': Offer.objects.filter(
-                product__slug='confetti-crumbl', 
-                active=True,
-                start_date__lte=now,
-                end_date__gte=now
-            ).first()
-        }
-    except Product.DoesNotExist:
-        confetti_crumbl = None
-    try:
-        blue_coriandoli = {
-            'product': get_object_or_404(Product, id=24),
-            'offer': Offer.objects.filter(
-                product__slug='blue-coriandoli-donut', 
-                active=True,
-                start_date__lte=now,
-                end_date__gte=now
-            ).first()
-        }
-    except Product.DoesNotExist:
-        blue_coriandoli = None
+    featured_slugs = ['confetti-crumbl', 'blue-coriandoli-donut']
+    featured_products = []
 
+    for slug in featured_slugs:
+        try:
+            product = Product.objects.get(slug=slug, available=True)
+            offer = Offer.objects.filter(
+                product=product,
+                active=True,
+                start_date__lte=now,
+                end_date__gte=now
+            ).first()
+            
+            featured_products.append({
+                'product': product,
+                'offer': offer,
+                'image_url': product.image.url if product.image else None
+            })
+        except Product.DoesNotExist:
+            continue
+
+    confetti_crumbl = next(
+        (p for p in featured_products if p['product'].slug == 'confetti-crumbl'), 
+        None
+    )
+    blue_coriandoli = next(
+        (p for p in featured_products if p['product'].slug == 'blue-coriandoli-donut'), 
+        None
+    )
+    
     return render(request, 'shop/home.html', {
         'confetti_crumbl': confetti_crumbl,
         'blue_coriandoli': blue_coriandoli,
-        'confetti_img': 'https://res.cloudinary.com/djusrww0l/image/upload/v1750783774/confetti_crumbl_zkyx7v.jpg',
-        'blue_img': 'https://res.cloudinary.com/djusrww0l/image/upload/v1750783769/blue_coriandoli_donut_klekcn.jpg'
+        'has_offers': any(p['offer'] for p in featured_products if p)
     })
 
 def servizi_view(request):
