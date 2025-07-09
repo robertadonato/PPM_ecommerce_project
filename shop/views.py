@@ -19,29 +19,36 @@ from decimal import Decimal
 def home_view(request):
     now = timezone.now()
     
-    confetti_crumbl = {
-        'product': get_object_or_404(Product, id=5),
-        'offer': Offer.objects.filter(
-            product_id=5, 
-            active=True,
-            start_date__lte=now,
-            end_date__gte=now
-        ).first()
-    }
-    
-    blue_coriandoli = {
-        'product': get_object_or_404(Product, id=24),
-        'offer': Offer.objects.filter(
-            product_id=24, 
-            active=True,
-            start_date__lte=now,
-            end_date__gte=now
-        ).first()
-    }
+    try:
+        confetti_crumbl = {
+            'product': get_object_or_404(Product, id=5),
+            'offer': Offer.objects.filter(
+                product__slug='confetti-crumbl', 
+                active=True,
+                start_date__lte=now,
+                end_date__gte=now
+            ).first()
+        }
+    except Product.DoesNotExist:
+        confetti_crumbl = None
+    try:
+        blue_coriandoli = {
+            'product': get_object_or_404(Product, id=24),
+            'offer': Offer.objects.filter(
+                product__slug='blue-coriandoli-donut', 
+                active=True,
+                start_date__lte=now,
+                end_date__gte=now
+            ).first()
+        }
+    except Product.DoesNotExist:
+        blue_coriandoli = None
 
     return render(request, 'shop/home.html', {
         'confetti_crumbl': confetti_crumbl,
-        'blue_coriandoli': blue_coriandoli
+        'blue_coriandoli': blue_coriandoli,
+        'confetti_img': 'https://res.cloudinary.com/djusrww0l/image/upload/v1750783774/confetti_crumbl_zkyx7v.jpg',
+        'blue_img': 'https://res.cloudinary.com/djusrww0l/image/upload/v1750783769/blue_coriandoli_donut_klekcn.jpg'
     })
 
 def servizi_view(request):
