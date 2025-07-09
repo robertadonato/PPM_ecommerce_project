@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h2>Modifica la tua recensione per {{ product.name }}</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Salva</button>
+  </form>
+  <a href="{% url 'shop:product_detail' slug=product.slug %}">Annulla</a>
+{% endblock %}

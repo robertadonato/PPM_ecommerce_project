@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+{% load mathfilters %}
+
+{% block title %}Dulcis Fabula - Dolci Artigianali di Qualità{% endblock %}
+
+{% block content %}
+<section class="hero-section py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold text-brown mb-4">Scopri il gusto autentico dei nostri dolci artigianali</h1>
+                <p class="lead mb-4">Ogni nostro prodotto è realizzato con ingredienti selezionati e tanta passione per regalarti momenti di pura dolcezza.</p>
+                <a href="{% url 'shop:product_list' %}" class="btn btn-brown btn-lg me-2">Scopri i prodotti</a>
+                <a href="{% url 'shop:chi_siamo' %}" class="btn btn-outline-brown btn-lg">Chi siamo</a>
+            </div>
+            <div class="col-lg-6">
+                <img src="https://res.cloudinary.com/djusrww0l/image/upload/w_800,c_fill,q_auto,f_auto/v1752071021/dulcis_fabula_img_frf0bh.jpg" 
+                    alt="Dolci artigianali" 
+                    class="img-fluid rounded" 
+                    style="width: 100%; height: 100%;"
+                    loading="lazy">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-4">Le Nostre Specialità</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="badge bg-danger position-absolute" style="top: 0.5rem; right: 0.5rem">Best Seller</div>
+                    <div class="card-body">
+                        <h5 class="card-title">Crumbl Cookies</h5>
+                        <p class="card-text">Giganteschi biscotti americani con glassature cremose e ingredienti premium.</p>
+                        <div class="d-flex justify-content-end">
+                            <a href="{% url 'shop:product_list' %}?category=crumbl" class="btn btn-sm btn-brown">Scopri</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Muffin Soffici</h5>
+                        <p class="card-text">Soffici e golosi, disponibili in vari gusti: cioccolato, mirtilli e vaniglia.</p>
+                        <div class="d-flex justify-content-end">
+                            <a href="{% url 'shop:product_list' %}?category=muffin" class="btn btn-sm btn-brown">Scopri</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="badge bg-warning position-absolute" style="top: 0.5rem; right: 0.5rem">Novità</div>
+                    <div class="card-body">
+                        <h5 class="card-title">Donut Glassati</h5>
+                        <p class="card-text">Soffici ciambelle con glassa colorata e topping croccanti.</p>
+                        <div class="d-flex justify-content-end">
+                            <a href="{% url 'shop:product_list' %}?category=donuts" class="btn btn-sm btn-brown">Scopri</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-4">Le Nostre Promozioni</h2>
+        <div class="row g-4">
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow-sm" style="border-color: #9e7f53;">
+                    <div class="card-header text-white" style="background-color: #9e7f53;">
+                        <h4 class="mb-0">OFFERTA LIMITATA</h4>
+                    </div>
+                    <div class="card-body">
+                        <h5>{{ confetti_crumbl.product.name }}</h5>
+                        <p class="card-text">{{ confetti_crumbl.offer.description }}</p>
+                        <div class="text-center">
+                            <span class="text-decoration-line-through text-muted">€{{ confetti_crumbl.product.price|floatformat:2 }}</span>
+                            <span class="h4 ms-2">
+                                €{{ confetti_crumbl.product.get_discounted_price|floatformat:2 }}
+                            </span>
+                            <small class="d-block text-success">Risparmi il {{ confetti_crumbl.offer.discount_percentage }}%</small>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0">
+                        <a href="{{ confetti_crumbl.product.get_absolute_url }}" 
+                        class="btn btn-secondary w-100" style="background-color: #9e7f53; border-color: #9e7f53;">
+                            Acquista ora
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow-sm" style="border-color: #9e7f53;">
+                    <div class="card-header text-white" style="background-color: #9e7f53;">
+                        <h4 class="mb-0">OFFERTA SPECIALE</h4>
+                    </div>
+                    <div class="card-body">
+                        <h5>{{ blue_coriandoli.product.name }}</h5>
+                        <p class="card-text">{{ blue_coriandoli.offer.description }}</p>
+                        <div class="text-center">
+                            <span class="text-decoration-line-through text-muted">€{{ blue_coriandoli.product.price|floatformat:2 }}</span>
+                            <span class="h4 ms-2">
+                                €{{ blue_coriandoli.product.get_discounted_price|floatformat:2 }}
+                            </span>
+                            <small class="d-block text-success">Risparmi il {{ blue_coriandoli.offer.discount_percentage }}%</small>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0">
+                        <a href="{{ blue_coriandoli.product.get_absolute_url }}" 
+                        class="btn btn-primary w-100" style="background-color: #9e7f53; border-color: #9e7f53;">
+                            Acquista ora
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">Scegli la tua categoria preferita</h2>
+        <div class="row g-4">
+            <div class="col-6 col-md-4">
+                <a href="{% url 'shop:product_list' %}?category=crumbl" class="text-decoration-none">
+                    <div class="card category-card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Crumbl Cookies</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4">
+                <a href="{% url 'shop:product_list' %}?category=muffin" class="text-decoration-none">
+                    <div class="card category-card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Muffin</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4">
+                <a href="{% url 'shop:product_list' %}?category=donuts" class="text-decoration-none">
+                    <div class="card category-card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Donut</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="testimonials py-5 bg-light">
+    <div class="container">
+        <h2 class="display-5 fw-bold text-brown text-center mb-5">Cosa dicono i nostri clienti</h2>
+        
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            {% for i in "12345" %}
+                                <i class="fas fa-star text-warning"></i>
+                            {% endfor %}
+                        </div>
+                        <p class="card-text">"I dolci di Dulcis Fabula sono semplicemente fantastici! La qualità degli ingredienti si sente in ogni boccone."</p>
+                        <div class="d-flex align-items-center mt-3">
+                            <img src="https://ui-avatars.com/api/?name=Maria+Bianchi&background=ccc&color=333&size=50&rounded=true" alt="Maria Bianchi" class="rounded-circle me-3">
+                            <div>
+                                <h5 class="mb-0">Maria Bianchi</h5>
+                                <small class="text-muted">Cliente dal 2020</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            {% for i in "12345" %}
+                                <i class="fas fa-star text-warning"></i>
+                            {% endfor %}
+                        </div>
+                        <p class="card-text">"Servizio impeccabile e dolci deliziosi. Ho ordinato i muffin per il compleanno di mia figlia e sono stati un successo!"</p>
+                        <div class="d-flex align-items-center mt-3">
+                            <img src="https://ui-avatars.com/api/?name=Luigi+Verdi&background=ccc&color=333&size=50&rounded=true" alt="Luigi Verdi" class="rounded-circle me-3">
+                            <div>
+                                <h5 class="mb-0">Luigi Verdi</h5>
+                                <small class="text-muted">Cliente dal 2021</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            {% for i in "12345" %}
+                                <i class="fas fa-star text-warning"></i>
+                            {% endfor %}
+                        </div>
+                        <p class="card-text">"Consegna sempre puntuale e prodotti freschissimi. Ormai mi rifornisco solo da loro per i miei eventi."</p>
+                        <div class="d-flex align-items-center mt-3">
+                            <img src="https://ui-avatars.com/api/?name=Sofia+Rossi&background=ccc&color=333&size=50&rounded=true" alt="Sofia Rossi" class="rounded-circle me-3">
+                            <div>
+                                <h5 class="mb-0">Sofia Rossi</h5>
+                                <small class="text-muted">Cliente dal 2019</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section py-5 text-white" style="background-color: rgb(170, 131, 75);">
+    <div class="container text-center">
+        <h2 class="display-5 fw-bold mb-4">Pronto a scoprire il gusto autentico?</h2>
+        <p class="lead mb-5">Iscriviti alla nostra newsletter per ricevere offerte esclusive e novità sui nostri prodotti.</p>
+        
+        <form class="row g-3 justify-content-center">
+            <div class="col-md-6">
+                <input type="email" class="form-control form-control-lg" placeholder="La tua email">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-light btn-lg w-100">Iscriviti</button>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function addOfferToCart(offerCode) {
+    fetch(`/api/offers/${offerCode}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            fetch('/clear-cart/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            }).then(() => {
+                const promises = data.products.map(product => {
+                    return fetch(`/add-to-cart/${product.id}/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': csrfToken,
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `quantity=${product.quantity}`
+                    });
+                });
+
+                return Promise.all(promises);
+            }).then(() => {
+                alert('Offerta aggiunta al carrello!');
+                window.location.href = "{% url 'shop:cart' %}";
+            });
+        }).catch(error => {
+            console.error('Error:', error);
+            alert('Si è verificato un errore durante l\'aggiunta al carrello');
+        });
+}
+</script>
+{% endblock %}

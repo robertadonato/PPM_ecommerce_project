@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+{% load static %}
+{% load mathfilters %}
+
+{% block title %}{{ product.name }} - Dulcis Fabula{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="product-image-container mb-4 position-relative">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid rounded shadow">
+                {% else %}
+                    <img src="{% static 'img/placeholder-product.jpg' %}" alt="Placeholder" class="img-fluid rounded shadow">
+                {% endif %}
+                
+                {% if product.offers.exists %}
+                    <span class="badge bg-danger position-absolute top-0 end-0 m-2 fs-6">
+                        Sconto {{ product.offers.first.discount_percentage }}%
+                    </span>
+                {% endif %}
+                
+                {% if product.is_new %}
+                    <span class="badge bg-success position-absolute top-0 start-0 m-2 fs-6">Novità</span>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'shop:product_list' %}">Prodotti</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'shop:product_list' %}?category={{ product.category.slug }}">{{ product.category.name }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+                </ol>
+            </nav>
+
+            {% if product.offers.exists %}
+                {% with offer=product.offers.first %}
+                    {% if offer.is_active %}
+                    <div class="alert alert-success mt-3">
+                        <strong>OFFERTA SPECIALE!</strong> 
+                        {{ offer.discount_percentage }}% di sconto fino al 
+                        {{ offer.end_date|date:"d/m/Y" }}
+                        {% if offer.description %}
+                            <div class="mt-2">{{ offer.description }}</div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                {% endwith %}
+            {% endif %}
+            
+            <h1 class="mb-3">{{ product.name }}</h1>
+            
+            <div class="d-flex align-items-center mb-3">
+                {% if product.offers.exists %}
+                    {% with active_offer=product.active_offers.first %}
+                        <h3 class="text-danger me-3">€{{ product.get_discounted_price|floatformat:2 }}</h3>
+                        <h5 class="text-muted text-decoration-line-through">€{{ product.price|floatformat:2 }}</h5>
+                    {% endwith %}
+                {% else %}
+                    <h3>€{{ product.price|floatformat:2 }}</h3>
+                {% endif %}
+            </div>
+            
+            <div class="mb-4">
+                <p>{{ product.description }}</p>
+            </div>
+            
+            <form action="{% url 'shop:add_to_cart' product.id %}" method="post" class="mb-4">
+                {% csrf_token %}
+                <div class="row g-3 align-items-center">
+                    <div class="col-auto">
+                        <label for="quantity" class="col-form-label">Quantità:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="number" id="quantity" name="quantity" value="1" min="1" max="{{ product.stock }}" class="form-control" style="width: 80px;">
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-brown">
+                            <i class="fas fa-cart-plus me-2"></i> Aggiungi al carrello
+                        </button>
+                    </div>
+                </div>
+            </form>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Informazioni aggiuntive</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Categoria:</span>
+                            <span>{{ product.category.name }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Disponibilità:</span>
+                            <span>
+                                {% if product.available %}
+                                    <span class="badge bg-success">Disponibile</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Esaurito</span>
+                                {% endif %}
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Stock:</span>
+                            <span>{{ product.stock }} pezzi</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Ingredienti:</span>
+                            <span>{{ product.ingredients }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Allergeni:</span>
+                            <span>{{ product.allergens|default:"Nessun allergene segnalato" }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="mb-4">Recensioni</h3>
+            
+            {% if reviews %}
+                <div class="row">
+                    {% for review in reviews %}
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between mb-3">
+                                        <h5 class="card-title">{{ review.user.first_name|default:review.user.username }}</h5>
+                                        <div>
+                                            {% for i in "12345" %}
+                                                {% if forloop.counter <= review.rating %}
+                                                    <i class="fas fa-star text-warning"></i>
+                                                {% else %}
+                                                    <i class="far fa-star text-warning"></i>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <p class="card-text">{{ review.comment }}</p>
+                                    {% if review.user == request.user %}
+                                        <div class="mt-2">
+                                            <a href="{% url 'shop:edit_review' review.id %}" class="btn btn-sm btn-outline-secondary me-2">Modifica</a>
+                                            <a href="{% url 'shop:delete_review' review.id %}" class="btn btn-sm btn-outline-danger">Elimina</a>
+                                        </div>
+                                    {% endif %}
+                                    <small class="text-muted">Recensito il {{ review.created_at|date:"d/m/Y" }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>Nessuna recensione per questo prodotto. Sii il primo a lasciare un commento!</p>
+            {% endif %}
+            
+            {% if user_has_purchased %}
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">Lascia la tua recensione</h5>
+                    <form method="post" action="{% url 'shop:add_review' product.id %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_rating" class="form-label">Voto</label>
+                            <select name="rating" id="id_rating" class="form-select" required>
+                                <option value="">Seleziona un voto</option>
+                                {% for i in "54321" %}
+                                    <option value="{{ i }}">{{ i }} stella{% if forloop.counter < 5 %}e{% endif %}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_comment" class="form-label">Commento</label>
+                            <textarea name="comment" id="id_comment" rows="4" class="form-control" placeholder="Scrivi la tua opinione..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-brown">Invia Recensione</button>
+                    </form>
+                </div>
+            </div>
+            {% elif user.is_authenticated %}
+            <div class="alert alert-info mt-4">
+                Acquista questo prodotto per lasciare una recensione.
+            </div>
+            {% else %}
+            <div class="alert alert-warning mt-4">
+                <a href="{% url 'accounts:login' %}?next={% url 'shop:product_detail' product.id product.slug%}" class="alert-link">Accedi</a> per lasciare una recensione.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    {% block product_actions %}
+    {% if user.is_store_manager or user.is_superuser %}
+    <div class="mt-4 p-3 bg-light rounded">
+        <h4>Azioni Manager</h4>
+        <div class="btn-group">
+            <a href="{% url 'shop:product_update' product.id %}" class="btn btn-outline-warning">
+                <i class="fas fa-edit me-1"></i>Modifica
+            </a>
+            <a href="{% url 'shop:product_delete' product.id %}" class="btn btn-outline-danger">
+                <i class="fas fa-trash me-1"></i>Elimina
+            </a>
+            
+            {% if user.is_superuser %}
+            <a href="{% url 'shop:product_stats' product.id %}" class="btn btn-outline-dark">
+                <i class="fas fa-chart-line me-1"></i>Statistiche avanzate
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+    {% endblock %}
+
+    {% if related_products %}
+        <div class="row mt-5">
+            <div class="col-12">
+                <h3 class="mb-4">Prodotti correlati</h3>
+                <div class="row">
+                    {% for related_product in related_products %}
+                        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                {% if related_product.image %}
+                                    <img src="{{ related_product.image.url }}" class="card-img-top" alt="{{ related_product.name }}" style="height: 200px; object-fit: cover;">
+                                {% else %}
+                                    <img src="{% static 'img/placeholder-product.jpg' %}" class="card-img-top" alt="Placeholder" style="height: 200px; object-fit: cover;">
+                                {% endif %}
+                                
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ related_product.name }}</h5>
+                                    <p class="card-text text-muted small">{{ related_product.description|truncatechars:60 }}</p>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <div>
+                                            {% if related_product.active_offers.exists %}
+                                                <span class="text-danger fw-bold">€{{ related_product.get_discounted_price|floatformat:2 }}</span>
+                                                <small class="text-decoration-line-through text-muted ms-2">€{{ related_product.price|floatformat:2 }}</small>
+                                            {% else %}
+                                                <span class="fw-bold">€{{ related_product.price|floatformat:2 }}</span>
+                                            {% endif %}
+                                        </div>
+                                        <a href="{% url 'shop:product_detail' related_product.id related_product.slug %}" class="btn btn-sm btn-brown">
+                                            <i class="fas fa-plus"></i> Dettagli
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

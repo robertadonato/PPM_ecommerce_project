@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+    <html lang="it">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta name="description" content="Dulcis Fabula - E-commerce di dolci artigianali di alta qualità">
+
+            <title>{% block title %}Dulcis Fabula{% endblock %}</title>
+            
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+            
+            <style>
+                :root {
+                    --primary-color: #6b4f27;
+                    --secondary-color: #9e7f53;
+                    --light-color: #ffffff;
+                    --dark-color: #2c2416;
+                    --danger-color: #dc3545;
+                    --success-color: #28a745;
+                    --warning-color: #ffc107;
+                    --info-color: #17a2b8;
+                }
+
+                .bg-brown {
+                    background-color: var(--secondary-color) !important;
+                }
+
+                .text-brown {
+                    color: var(--primary-color) !important;
+                }
+
+                .btn-brown {
+                    background-color: var(--primary-color);
+                    border-color: var(--primary-color);
+                    color: white;
+                }
+
+                .btn-brown:hover,
+                .btn-brown:focus {
+                    background-color: #5a4120;
+                    border-color: #5a4120;
+                    color: white;
+                }
+
+                .btn-outline-brown {
+                    color: var(--primary-color);
+                    border-color: var(--primary-color);
+                }
+
+                .btn-outline-brown:hover {
+                    background-color: var(--primary-color);
+                    color: white;
+                }
+
+                .navbar {
+                    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                }
+
+                .hero-section {
+                    color: rgb(75, 55, 12);
+                    padding: 120px 0;
+                    margin-bottom: 50px;
+                }
+
+                .hero-title {
+                    font-size: 3rem;
+                    font-weight: 700;
+                }
+
+                .product-card {
+                    transition: all 0.3s ease;
+                    border: none;
+                    overflow: hidden;
+                }
+
+                .product-card:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+                }
+
+                .product-img-container {
+                    height: 200px;
+                    overflow: hidden;
+                }
+
+                .product-img {
+                    transition: transform 0.5s ease;
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+
+                .product-card:hover .product-img {
+                    transform: scale(1.05);
+                }
+
+                .border-brown {
+                    border: 1px solid #8B4513 !important;
+                }
+
+                .card.hover {
+                    transition: transform 0.3s ease;
+                }
+
+                .card.hover:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+                }
+
+                .badge-discount {
+                    background-color: var(--danger-color);
+                    color: white;
+                }
+
+                .badge-new {
+                    background-color: var(--success-color);
+                    color: white;
+                }
+
+                footer {
+                    background-color: var(--dark-color);
+                    color: white;
+                }
+
+                footer a {
+                    color: var(--light-color);
+                    text-decoration: none;
+                    transition: color 0.3s ease;
+                }
+
+                footer a:hover {
+                    color: var(--secondary-color);
+                }
+
+                .social-icons a {
+                    display: inline-block;
+                    width: 36px;
+                    height: 36px;
+                    line-height: 36px;
+                    text-align: center;
+                    background-color: rgba(255, 255, 255, 0.1);
+                    border-radius: 50%;
+                    margin-right: 8px;
+                    transition: all 0.3s ease;
+                }
+
+                .social-icons a:hover {
+                    background-color: var(--primary-color);
+                    transform: translateY(-3px);
+                }
+
+                @media (max-width: 768px) {
+                    .hero-title {
+                        font-size: 2.5rem;
+                    }
+                    
+                    .product-img-container {
+                        height: 150px;
+                    }
+                }
+
+                @keyframes fadeIn {
+                    from { opacity: 0; transform: translateY(20px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+
+                .fade-in {
+                    animation: fadeIn 0.6s ease forwards;
+                }
+
+                @keyframes cartBounce {
+                    0%, 100% { transform: translateY(0); }
+                    50% { transform: translateY(-10px); }
+                }
+
+                .cart-animation {
+                    animation: cartBounce 0.5s ease;
+                }
+
+                .add-to-cart {
+                    transition: all 0.3s ease;
+                }
+
+                .add-to-cart:hover {
+                    transform: scale(1.05);
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                }
+            </style>
+
+            {% block extra_css %}{% endblock %}
+        </head>
+        <body>
+            <nav class="navbar navbar-expand-lg navbar-dark bg-brown fixed-top">
+                <div class="container">
+                    <a class="navbar-brand" href="{% url 'shop:home' %}">Dulcis Fabula</a>
+                    
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav me-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'shop:product_list' %}">Prodotti</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'shop:chi_siamo' %}">Chi Siamo</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'shop:servizi' %}">Servizi</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'shop:contatti' %}">Contatti</a>
+                            </li>
+                        </ul>
+                        
+                        <ul class="navbar-nav">
+                            {% if user.is_authenticated %}
+                                {% if user.is_store_manager or user.is_superuser %}
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                                        <i class="fas fa-user-shield"></i> 
+                                        {% if user.is_superuser %}
+                                        <span class="text">ADMIN</span>
+                                        {% else %}
+                                        Gestione
+                                        {% endif %}
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="{% url 'shop:manage_products' %}">Prodotti</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'shop:manage_categories' %}">Categorie</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'orders:manage_orders' %}">Ordini</a></li>
+                                        
+                                        {% if user.is_superuser %}
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="/admin/" target="_blank">
+                                            <i class="fas fa-cogs"></i> Admin Django
+                                        </a></li>
+                                        {% endif %}
+                                    </ul>
+                                </li>
+                                {% else %}
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'accounts:profile' %}">
+                                            <i class="fas fa-user-circle me-1"></i> Profilo
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'accounts:logout' %}">
+                                        <i class="fas fa-sign-out-alt me-1"></i> Logout
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'accounts:login' %}">
+                                        <i class="fas fa-sign-in-alt me-1"></i> Login
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'accounts:signup' %}">
+                                        <i class="fas fa-user-plus me-1"></i> Registrati
+                                    </a>
+                                </li>
+                            {% endif %}
+                            <li class="nav-item">
+                                <a class="nav-link position-relative" href="{% url 'shop:cart' %}">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    {% if cart_items_count > 0 %}
+                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                            {{ cart_items_count }}
+                                        </span>
+                                    {% endif %}
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <main class="container mt-5 pt-4">
+                {% include 'partials/messages.html' %}
+                {% block content %}{% endblock %}
+            </main> 
+
+            <footer class="bg text-white py-4 mt-5">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-4 mb-4 mb-md-0">
+                            <h5>Dulcis Fabula</h5>
+                            <p>Il gusto delle storie più dolci</p>
+                            <div class="social-icons">
+                                <a href="#" class="text-white me-2"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#" class="text-white me-2"><i class="fab fa-instagram"></i></a>
+                                <a href="#" class="text-white"><i class="fab fa-pinterest"></i></a>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4 mb-md-0">
+                            <h5>Link Utili</h5>
+                            <ul class="list-unstyled">
+                                <li><a href="{% url 'shop:product_list' %}" class="text-white">Prodotti</a></li>
+                                <li><a href="{% url 'shop:servizi' %}" class="text-white">Servizi</a></li>
+                                <li><a href="{% url 'shop:chi_siamo' %}" class="text-white">Chi Siamo</a></li>
+                                <li><a href="{% url 'shop:contatti' %}" class="text-white">Contatti</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <h5>Contatti</h5>
+                            <address>
+                                <i class="fas fa-map-marker-alt me-2"></i> Via dei Dolci 123, 20100 Milano<br>
+                                <i class="fas fa-phone me-2"></i> +39 02 1234567<br>
+                                <i class="fas fa-envelope me-2"></i> info@dulcisfabula.it
+                            </address>
+                        </div>
+                    </div>
+                    <hr class="my-4 bg-light">
+                    <div class="text-center">
+                        <p class="mb-0">&copy; {% now "Y" %} Dulcis Fabula. Tutti i diritti riservati.</p>
+                    </div>
+                </div>
+            </footer>
+
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            <script> 
+                window.addEventListener('scroll', function() {
+                    const navbar = document.querySelector('.navbar');
+                    if (window.scrollY > 50) {
+                        navbar.classList.add('shrink');
+                    } else {
+                        navbar.classList.remove('shrink');
+                    }
+                });
+
+                document.addEventListener('DOMContentLoaded', function() {
+                    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                    tooltipTriggerList.map(function (tooltipTriggerEl) {
+                        return new bootstrap.Tooltip(tooltipTriggerEl);
+                    });
+                    
+                    const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+                    popoverTriggerList.map(function (popoverTriggerEl) {
+                        return new bootstrap.Popover(popoverTriggerEl);
+                    });
+                });
+
+                document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const cartIcon = document.querySelector('.cart-icon');
+                        cartIcon.classList.add('cart-animation');
+                        
+                        setTimeout(() => {
+                            cartIcon.classList.remove('cart-animation');
+                        }, 500);
+                    });
+                });
+
+                (function () {
+                    'use strict';
+                    
+                    const forms = document.querySelectorAll('.needs-validation');
+
+                    Array.prototype.slice.call(forms)
+                        .forEach(function (form) {
+                            form.addEventListener('submit', function (event) {
+                                if (!form.checkValidity()) {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+                                }
+                                
+                                form.classList.add('was-validated');
+                            }, false);
+                        });
+                })();
+
+                window.setTimeout(function() {
+                    const alerts = document.querySelectorAll('.alert');
+                    alerts.forEach(function(alert) {
+                        const bsAlert = new bootstrap.Alert(alert);
+                        bsAlert.close();
+                    });
+                }, 5000);
+            </script>
+            
+            {% block extra_js %}{% endblock %}
+        </body>
+    </html>

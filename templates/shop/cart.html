@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Carrello - Dulcis Fabula{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-brown text-white">
+                        <h2 class="mb-0">Il tuo carrello</h2>
+                    </div>
+                    
+                    <div class="card-body">
+                        {% if cart_items %}
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Prodotto</th>
+                                            <th scope="col">Prezzo</th>
+                                            <th scope="col">Quantità</th>
+                                            <th scope="col">Totale</th>
+                                            <th scope="col"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in cart_items %}
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        {% if item.product.image %}
+                                                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="img-thumbnail me-3">
+                                                        {% else %}
+                                                            <img src="{% static 'img/placeholder-product.jpg' %}" alt="Placeholder" class="img-thumbnail me-3">
+                                                        {% endif %}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    {% if item.is_gift %}
+                                                        <span class="text-success">€0.00</span>
+                                                    {% elif item.product.discount_price %}
+                                                        <span class="text-danger">€{{ item.product.discount_price|floatformat:2 }}</span>
+                                                        <small class="text-decoration-line-through text-muted d-block">€{{ item.product.price|floatformat:2 }}</small>
+                                                    {% else %}
+                                                        €{{ item.product.price|floatformat:2 }}
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if item.product.discount_price %}
+                                                        <span class="text-danger">€{{ item.product.discount_price|floatformat:2 }}</span>
+                                                        <small class="text-decoration-line-through text-muted d-block">€{{ item.product.price|floatformat:2 }}</small>
+                                                    {% else %}
+                                                        €{{ item.product.price|floatformat:2 }}
+                                                    {% endif %}
+                                                </td>  
+                                                <td>
+                                                    <div class="input-group" style="width: 100px;">
+                                                        <button class="btn btn-outline-secondary btn-sm quantity-btn" 
+                                                                data-item-id="{{ item.id }}" 
+                                                                data-update-url="{% url 'shop:update_cart_item' item.id %}"
+                                                                data-action="decrease">-</button>
+                                                        <input type="number" class="form-control form-control-sm text-center quantity-input" 
+                                                            value="{{ item.quantity }}" min="1" 
+                                                            max="{{ item.product.stock }}" readonly>
+                                                        <button class="btn btn-outline-secondary btn-sm quantity-btn" 
+                                                                data-item-id="{{ item.id }}" 
+                                                                data-update-url="{% url 'shop:update_cart_item' item.id %}"
+                                                                data-action="increase">+</button>
+                                                    </div>
+                                                </td>
+                                                <td>€{{ item.get_total_price|floatformat:2 }}</td>
+                                                <td>
+                                                    <a href="{% url 'shop:remove_from_cart' item.id %}" 
+                                                       class="btn btn-sm btn-outline-danger">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-shopping-cart fa-4x text-muted mb-4"></i>
+                                <h3>Il tuo carrello è vuoto</h3>
+                                <p class="text-muted">Aggiungi alcuni prodotti prima di procedere al checkout</p>
+                                <a href="{% url 'shop:product_list' %}" class="btn btn-brown">Continua lo shopping</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {% if cart_items %}
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'shop:product_list' %}" class="btn btn-outline-brown">
+                            <i class="fas fa-arrow-left me-2"></i> Continua lo shopping
+                        </a>
+                        <a href="{% url 'shop:checkout' %}" class="btn btn-brown">
+                            Procedi al checkout <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+            
+            {% if cart_items %}
+                <div class="col-lg-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-brown text-white">
+                            <h3 class="mb-0">Riepilogo ordine</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush mb-3">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Subtotale:</span>
+                                    <span>€{{ subtotal|floatformat:2 }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Spedizione:</span>
+                                    <span>
+                                        {% if shipping_cost == 0 %}
+                                            Gratuita
+                                        {% else %}
+                                            €{{ shipping_cost|floatformat:2 }}
+                                        {% endif %}
+                                    </span>
+                                </li>
+                                {% if discount > 0 %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center text-danger">
+                                        <span>Sconto:</span>
+                                        <span>-€{{ discount|floatformat:2 }}</span>
+                                    </li>
+                                {% endif %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center fw-bold">
+                                    <span>Totale:</span>
+                                    <span>€{{ total|floatformat:2 }}</span>
+                                </li>
+                            </ul>
+                            
+                            {% if not user.is_authenticated %}
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <a href="{% url 'accounts:login' %}?next={% url 'shop:cart' %}" class="alert-link">Accedi</a> per ottenere spedizione gratuita e sconti speciali!
+                                </div>
+                            {% endif %}
+                            
+                            <a href="{% url 'shop:checkout' %}" class="btn btn-brown w-100 py-2">
+                                Procedi al checkout
+                            </a>
+                            
+                            <div class="text-center mt-3">
+                                <img src="https://res.cloudinary.com/djusrww0l/image/upload/v1752071021/metodi-di-pagamento_r1y0kt.jpg" 
+                                    alt="Metodi di pagamento accettati" 
+                                    class="img-fluid" 
+                                    style="max-height: 100px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    function getCSRFToken() {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith('csrftoken=')) {
+                return decodeURIComponent(cookie.substring('csrftoken='.length));
+            }
+        }
+        console.error('CSRF token non trovato nei cookie');
+        return null;
+    }
+
+    document.querySelectorAll('.quantity-btn').forEach(button => {
+        button.addEventListener('click', async function() {
+            const itemId = this.dataset.itemId;
+            const action = this.dataset.action;
+            const updateUrl = this.dataset.updateUrl;
+            if (!updateUrl) {
+                alert('URL di aggiornamento non trovato.');
+                return;
+            }
+            const input = this.parentElement.querySelector('.quantity-input');
+
+            let quantity = parseInt(input.value);
+            if (action === 'increase') {
+                quantity = Math.min(quantity + 1, parseInt(input.max));
+            } else if (action === 'decrease') {
+                quantity = Math.max(quantity - 1, parseInt(input.min));
+            }
+            input.value = quantity;
+
+            const csrftoken = getCSRFToken();
+            if (!csrftoken) {
+                alert('Errore di sicurezza. Per favore, ricarica la pagina.');
+                return;
+            }
+
+            try {
+                const response = await fetch(updateUrl, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrftoken,
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `quantity=${quantity}`
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Errore HTTP: ${response.status}`);
+                }
+
+                const data = await response.json();
+                if (!data.success) {
+                    throw new Error(data.message || 'Aggiornamento fallito');
+                }
+
+                location.reload();
+            } catch (error) {
+                console.error('Errore:', error);
+                alert(`Errore durante l'aggiornamento: ${error.message}`);
+                location.reload();
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

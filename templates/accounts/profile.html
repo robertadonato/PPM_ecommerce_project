@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+  <h1 class="mb-4">Il mio profilo</h1>
+  <div class="row">
+
+    <div class="col-md-4 mb-4">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">Dati personali</h5>
+        </div>
+        <div class="list-group list-group-flush">
+          <a href="{% url 'accounts:profile_update' %}" class="list-group-item list-group-item-action">Modifica profilo</a>
+          <a href="{% url 'orders:order_history' %}" class="list-group-item list-group-item-action">I miei ordini</a>
+          <a href="{% url 'accounts:change_password' %}" class="list-group-item list-group-item-action">Cambia password</a>
+          <a href="{% url 'accounts:logout' %}" class="list-group-item list-group-item-action text-danger">Esci</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">Dati personali</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label fw-bold">Username:</label>
+            <p class="form-control-static">{{ user.username }}</p>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold">Email:</label>
+            <p class="form-control-static">{{ user.email }}</p>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold">Nome:</label>
+            <p class="form-control-static">{{ user.first_name }}</p>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold">Cognome:</label>
+            <p class="form-control-static">{{ user.last_name }}</p>
+          </div>
+          <a href="{% url 'accounts:profile_update' %}" class="btn" style="background-color:rgb(170, 131, 75); color:rgb(253, 240, 218);">Modifica profilo</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

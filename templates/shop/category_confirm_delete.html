@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Elimina Categoria - Dulcis Fabula{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card border-danger">
+        <div class="card-header bg-danger text-white">
+            <h2 class="mb-0">Conferma eliminazione</h2>
+        </div>
+        <div class="card-body">
+            <p>Stai per eliminare la categoria <strong>{{ object.name }}</strong>.</p>
+            
+            {% if object.products.count > 0 %}
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                Attenzione! Questa categoria contiene {{ object.products.count }} prodotti.
+            </div>
+            {% endif %}
+            
+            <form method="post">
+                {% csrf_token %}
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <a href="{% url 'shop:manage_categories' %}" class="btn btn-secondary">Annulla</a>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash-alt"></i> Conferma eliminazione
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

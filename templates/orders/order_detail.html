@@ -1,0 +1,289 @@
+{% extends "base.html" %}
+
+{% block title %}Ordine #{{ order.order_number }} - Dulcis Fabula{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    {% block order_details %}
+        {% if user.is_superuser %}
+        <div class="card border-danger mt-4">
+            <div class="card-header bg-danger text-white">
+                <i class="fas fa-lock-open me-2"></i>Azioni Amministrative
+            </div>
+            <div class="card-body">
+                <div class="btn-group">
+                    <button class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#refundModal">
+                        <i class="fas fa-money-bill-wave me-1"></i>Rimborso forzato
+                    </button>
+                    <a href="{% url 'orders:invoice' order.id %}?admin=true" class="btn btn-outline-dark">
+                        <i class="fas fa-file-invoice me-1"></i>Fattura Admin
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    {% endblock %}
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">Ordine #{{ order.order_number }}</h1>
+        <a href="{% url 'accounts:orders' %}" class="btn btn-outline-brown">
+            <i class="fas fa-arrow-left me-2"></i> Torna allo storico
+        </a>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-brown text-white">
+                    <h2 class="mb-0">Prodotti ordinati</h2>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Prodotto</th>
+                                    <th>Prezzo</th>
+                                    <th>Quantità</th>
+                                    <th>Totale</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.items.all %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                {% if item.product.image %}
+                                                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" 
+                                                         class="img-thumbnail me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                                {% else %}
+                                                    <img src="{% static 'img/placeholder-product.jpg' %}" alt="Placeholder" 
+                                                         class="img-thumbnail me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                                {% endif %}
+                                                <div>
+                                                    <h6 class="mb-1">{{ item.product.name }}</h6>
+                                                    <p class="text-muted small mb-0">{{ item.product.category.name }}</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>€{{ item.price|floatformat:2 }}</td>
+                                        <td>{{ item.quantity }}</td>
+                                        <td>€{{ item.get_total_price|floatformat:2 }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-header bg-brown text-white">
+                    <h2 class="mb-0">Stato dell'ordine</h2>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        <div class="timeline-item {% if order.status == 'pending' %}active{% endif %}">
+                            <div class="timeline-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h5>In attesa</h5>
+                                <p>Il tuo ordine è stato ricevuto e sta per essere elaborato</p>
+                                <small>{{ order.created_at|date:"d/m/Y H:i" }}</small>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item {% if order.status == 'processing' %}active{% elif order.status in 'shipped,delivered' %}completed{% endif %}">
+                            <div class="timeline-icon">
+                                <i class="fas fa-cog"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h5>In lavorazione</h5>
+                                <p>Stiamo preparando il tuo ordine</p>
+                                {% if order.status in 'processing,shipped,delivered' %}
+                                    <small>{{ order.updated_at|date:"d/m/Y H:i" }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item {% if order.status == 'shipped' %}active{% elif order.status == 'delivered' %}completed{% endif %}">
+                            <div class="timeline-icon">
+                                <i class="fas fa-truck"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h5>Spedito</h5>
+                                <p>Il tuo ordine è stato spedito</p>
+                                {% if order.status in 'shipped,delivered' %}
+                                    <small>{{ order.updated_at|date:"d/m/Y H:i" }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item {% if order.status == 'delivered' %}completed{% endif %}">
+                            <div class="timeline-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h5>Consegnato</h5>
+                                <p>Il tuo ordine è stato consegnato</p>
+                                {% if order.status == 'delivered' %}
+                                    <small>{{ order.updated_at|date:"d/m/Y H:i" }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-brown text-white">
+                    <h2 class="mb-0">Riepilogo ordine</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush mb-3">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Subtotale:</span>
+                            <span>€{{ order.total_amount|floatformat:2 }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Spedizione:</span>
+                            <span>Gratuita</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center fw-bold">
+                            <span>TOTALE:</span>
+                            <span>€{{ order.total_amount|floatformat:2 }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-brown text-white">
+                    <h2 class="mb-0">Indirizzo di spedizione</h2>
+                </div>
+                <div class="card-body">
+                    <address>
+                        <strong>{{ order.shipping_name }}</strong><br>
+                        {{ order.shipping_address }}<br>
+                        {{ order.shipping_postal_code }} {{ order.shipping_city }}<br>
+                        <i class="fas fa-phone me-2"></i> {{ order.shipping_phone }}
+                    </address>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-header bg-brown text-white">
+                    <h2 class="mb-0">Informazioni ordine</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Numero ordine:</span>
+                            <span>{{ order.order_number }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Data ordine:</span>
+                            <span>{{ order.created_at|date:"d/m/Y H:i" }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Metodo di pagamento:</span>
+                            <span>Carta di credito</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Stato:</span>
+                            <span>
+                                {% if order.status == 'pending' %}
+                                    <span class="badge bg-warning text-dark">In attesa</span>
+                                {% elif order.status == 'processing' %}
+                                    <span class="badge bg-info text-dark">In lavorazione</span>
+                                {% elif order.status == 'shipped' %}
+                                    <span class="badge bg-primary">Spedito</span>
+                                {% elif order.status == 'delivered' %}
+                                    <span class="badge bg-success">Consegnato</span>
+                                {% elif order.status == 'cancelled' %}
+                                    <span class="badge bg-danger">Annullato</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Sconosciuto</span>
+                                {% endif %}
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.timeline {
+    position: relative;
+    padding-left: 50px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #e9ecef;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.timeline-icon {
+    position: absolute;
+    left: -50px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+}
+
+.timeline-item.active .timeline-icon {
+    background-color: #9e7f53;
+    color: white;
+}
+
+.timeline-item.completed .timeline-icon {
+    background-color: #28a745;
+    color: white;
+}
+
+.timeline-content {
+    padding: 10px 15px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+.timeline-item.active .timeline-content {
+    background-color: #f5e6cc;
+}
+
+.timeline-item.completed .timeline-content {
+    background-color: #e8f5e9;
+}
+
+.timeline-content h5 {
+    margin-bottom: 5px;
+}
+
+.timeline-content small {
+    color: #6c757d;
+    font-size: 0.8rem;
+}
+</style>
+{% endblock %}

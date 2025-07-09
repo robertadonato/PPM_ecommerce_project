@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Registrati - Dulcis Fabula{% endblock %}
+
+{% block content %}
+<section class="auth-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-brown text-white text-center py-3">
+                        <h2 class="mb-0">Crea un account</h2>
+                        <p class="mb-0 small">Unisciti alla nostra comunità di amanti dei dolci</p>
+                    </div>
+                    <div class="card-body p-4">
+                        <form method="post" class="needs-validation" novalidate>
+                            {% csrf_token %}
+                            
+                            {% if form.non_field_errors %}
+                                <div class="alert alert-danger">
+                                    {% for error in form.non_field_errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="id_first_name" class="form-label">Nome</label>
+                                    <input type="text" name="first_name" id="id_first_name" class="form-control" required>
+                                    <div class="invalid-feedback">
+                                        Inserisci il tuo nome
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="id_last_name" class="form-label">Cognome</label>
+                                    <input type="text" name="last_name" id="id_last_name" class="form-control" required>
+                                    <div class="invalid-feedback">
+                                        Inserisci il tuo cognome
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="id_email" class="form-label">Email</label>
+                                <input type="email" name="email" id="id_email" class="form-control" required>
+                                <div class="invalid-feedback">
+                                    Inserisci un'email valida
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="id_username" class="form-label">Username</label>
+                                <input type="text" name="username" id="id_username" class="form-control" required>
+                                <div class="invalid-feedback">
+                                    Scegli un username
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="id_password1" class="form-label">Password</label>
+                                <input type="password" name="password1" id="id_password1" class="form-control" required>
+                                <div class="invalid-feedback">
+                                    Crea una password sicura
+                                </div>
+                                <small class="form-text text-muted">Minimo 8 caratteri con numeri e lettere</small>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="id_password2" class="form-label">Conferma Password</label>
+                                <input type="password" name="password2" id="id_password2" class="form-control" required>
+                                <div class="invalid-feedback">
+                                    Le password devono corrispondere
+                                </div>
+                            </div>
+                            
+                            <div class="form-check mb-4">
+                                <input class="form-check-input" type="checkbox" id="terms" required>
+                                <label class="form-check-label" for="terms">
+                                    Accetto i <a href="#" class="text-brown">Termini di servizio</a> e l'<a href="#" class="text-brown">Informativa sulla privacy</a>
+                                </label>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-brown w-100 py-2 mb-3">Registrati</button>
+                            
+                            <div class="text-center pt-3">
+                                <p class="mb-0">Hai già un account? <a href="{% url 'accounts:login' %}" class="text-brown fw-bold">Accedi</a></p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.auth-section {
+    background-color: #f8f5f0;
+    min-height: calc(100vh - 180px);
+}
+
+.card {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.form-control:focus {
+    border-color: #9e7f53;
+    box-shadow: 0 0 0 0.25rem rgba(158, 127, 83, 0.25);
+}
+
+.text-brown {
+    color: #9e7f53;
+}
+
+.btn-brown {
+    background-color: #9e7f53;
+    color: white;
+    transition: all 0.3s;
+}
+
+.btn-brown:hover {
+    background-color: #7a6341;
+    color: white;
+}
+</style>
+
+<script>
+(function () {
+    'use strict'
+    
+    var forms = document.querySelectorAll('.needs-validation')
+    
+    Array.prototype.slice.call(forms)
+        .forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                
+                form.classList.add('was-validated')
+            }, false)
+        })
+})()
+</script>
+{% endblock %}

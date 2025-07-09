@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Gestione Ordini - Dulcis Fabula{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4">Gestione Ordini</h1>
+    
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-brown text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">Tutti gli ordini</h2>
+                <div class="dropdown">
+                    <button class="btn btn-outline-light dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown">
+                        Filtra per stato
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="?status=">Tutti</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="?status=pending">In attesa</a></li>
+                        <li><a class="dropdown-item" href="?status=processing">In lavorazione</a></li>
+                        <li><a class="dropdown-item" href="?status=shipped">Spediti</a></li>
+                        <li><a class="dropdown-item" href="?status=delivered">Consegnati</a></li>
+                        <li><a class="dropdown-item" href="?status=cancelled">Annullati</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-body">
+            {% if orders %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Cliente</th>
+                                <th>Data</th>
+                                <th>Stato</th>
+                                <th>Totale</th>
+                                <th>Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                                <tr>
+                                    <td>{{ order.order_number }}</td>
+                                    <td>{{ order.user.username }}</td>
+                                    <td>{{ order.created_at|date:"d/m/Y H:i" }}</td>
+                                    <td>
+                                        <form method="post" action="{% url 'orders:update_order_status' order.id %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                                                <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>In attesa</option>
+                                                <option value="processing" {% if order.status == 'processing' %}selected{% endif %}>In lavorazione</option>
+                                                <option value="shipped" {% if order.status == 'shipped' %}selected{% endif %}>Spedito</option>
+                                                <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>Consegnato</option>
+                                                <option value="cancelled" {% if order.status == 'cancelled' %}selected{% endif %}>Annullato</option>
+                                            </select>
+                                        </form>
+                                    </td>
+                                    <td>€{{ order.total_amount|floatformat:2 }}</td>
+                                    <td>
+                                        <a href="{% url 'orders:manage_order_detail' order.id %}" class="btn btn-sm btn-outline-brown">
+                                            <i class="fas fa-eye"></i> Dettagli
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                {% if is_paginated %}
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center mt-4">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                    <li class="page-item"><a class="page-link" href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">{{ num }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-box-open fa-4x text-muted mb-4"></i>
+                    <h3>Nessun ordine trovato</h3>
+                    <p class="text-muted">Non ci sono ordini corrispondenti ai criteri di ricerca</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

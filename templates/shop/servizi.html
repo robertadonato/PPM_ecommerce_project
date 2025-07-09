@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Servizi di Consegna | Dulcis Fabula{% endblock %}
+
+{% block content %}
+<section class="delivery-services py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold text-brown">I Nostri Servizi di Consegna</h1>
+            <p class="lead">Portiamo la dolcezza direttamente a casa tua</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-truck fa-3x text-brown mb-3"></i>
+                        <h3 class="h4">Consegna Standard</h3>
+                        <p class="text-muted">Consegna entro 24-48 ore in tutta la città. Orari flessibili per adattarsi alle tue esigenze.</p>
+                        <p><strong>Costo:</strong> €5.00</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-bolt fa-3x text-brown mb-3"></i>
+                        <h3 class="h4">Consegna Espressa</h3>
+                        <p class="text-muted">Ricevi i tuoi dolci preferiti in meno di 3 ore. Perfetto per quelle occasioni last minute.</p>
+                        <p><strong>Costo:</strong> €9.00</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-gift fa-3x text-brown mb-3"></i>
+                        <h3 class="h4">Consegna Regalo</h3>
+                        <p class="text-muted">Servizio completo con confezione regalo e messaggio personalizzato. Rendiamo speciale ogni occasione.</p>
+                        <p><strong>Costo:</strong> €7.00 + prezzo confezione</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="alert alert-info mt-5">
+            <h4 class="alert-heading">Informazioni Importanti</h4>
+            <ul class="mb-0">
+                <li>Consegna disponibile dal lunedì al sabato</li>
+                <li>Orario: 9:00 - 19:00</li>
+                <li>Per ordini speciali, contattarci almeno 48 ore prima</li>
+            </ul>
+        </div>
+    </div>
+</section>
+{% endblock %}

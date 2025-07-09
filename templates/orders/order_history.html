@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Storico Ordini - Dulcis Fabula{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header bg-brown text-white">
+                    <h5 class="mb-0">Menu profilo</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="{% url 'accounts:profile' %}" class="list-group-item list-group-item-action">Dati personali</a>
+                    <a href="{% url 'accounts:profile_update' %}" class="list-group-item list-group-item-action">Modifica profilo</a>
+                    <a href="{% url 'accounts:orders' %}" class="list-group-item list-group-item-action active">I miei ordini</a>
+                    <a href="{% url 'accounts:change_password' %}" class="list-group-item list-group-item-action">Cambia password</a>
+                    <a href="{% url 'accounts:logout' %}" class="list-group-item list-group-item-action text-danger">Esci</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-brown text-white">
+                    <h2 class="mb-0">Storico ordini</h2>
+                </div>
+                
+                <div class="card-body">
+                    {% if orders %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Data</th>
+                                        <th>Stato</th>
+                                        <th>Totale</th>
+                                        <th>Azioni</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order in orders %}
+                                        <tr>
+                                            <td>{{ order.order_number }}</td>
+                                            <td>{{ order.created_at|date:"d/m/Y H:i" }}</td>
+                                            <td>
+                                                {% if order.status == 'pending' %}
+                                                    <span class="badge bg-warning text-dark">In attesa</span>
+                                                {% elif order.status == 'processing' %}
+                                                    <span class="badge bg-info text-dark">In lavorazione</span>
+                                                {% elif order.status == 'shipped' %}
+                                                    <span class="badge bg-primary">Spedito</span>
+                                                {% elif order.status == 'delivered' %}
+                                                    <span class="badge bg-success">Consegnato</span>
+                                                {% elif order.status == 'cancelled' %}
+                                                    <span class="badge bg-danger">Annullato</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">Sconosciuto</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>€{{ order.total_amount|floatformat:2 }}</td>
+                                            <td>
+                                                <a href="{% url 'orders:order_detail' order.order_number %}" class="btn btn-sm btn-outline-brown">
+                                                    <i class="fas fa-eye"></i> Dettagli
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        {% if is_paginated %}
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination justify-content-center mt-4">
+                                    {% if page_obj.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                    
+                                    {% for num in page_obj.paginator.page_range %}
+                                        {% if page_obj.number == num %}
+                                            <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                            <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                                        {% endif %}
+                                    {% endfor %}
+                                    
+                                    {% if page_obj.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-box-open fa-4x text-muted mb-4"></i>
+                            <h3>Nessun ordine effettuato</h3>
+                            <p class="text-muted">Non hai ancora effettuato ordini nel nostro negozio</p>
+                            <a href="{% url 'shop:product_list' %}" class="btn btn-brown">Vai allo shop</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

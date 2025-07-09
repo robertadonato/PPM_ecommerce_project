@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Gestione Categorie</h2>
+
+    {% if user.is_superuser %}
+    <div class="alert alert-danger mb-3">
+        <i class="fas fa-shield-alt me-2"></i>
+        <strong>Modalità Superuser Attiva</strong> - Puoi eliminare qualsiasi categoria
+    </div>
+    {% endif %}
+    
+    <div class="mb-4">
+        <a href="{% url 'shop:category_add' %}" class="btn btn-success">
+            <i class="fas fa-plus"></i> Aggiungi Categoria
+        </a>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Slug</th>
+                <th>Prodotti</th>
+                <th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for category in categories %}
+            <tr>
+                <td>{{ category.name }}</td>
+                <td>{{ category.slug }}</td>
+                <td>{{ category.products.count }}</td>
+                <td>
+                    <a href="{% url 'shop:category_update' category.id %}" class="btn btn-sm btn-warning">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a href="{% url 'shop:category_delete' category.id %}" class="btn btn-sm btn-danger">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

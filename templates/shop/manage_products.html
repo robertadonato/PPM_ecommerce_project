@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Gestione Prodotti - Dulcis Fabula{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    {% if user.is_superuser %}
+    <div class="alert alert-danger mb-4">
+        <i class="fas fa-shield-alt"></i> Stai operando come Superuser - Tutte le modifiche sono permesse
+    </div>
+    {% endif %}
+
+    <h2 class="mb-4">Gestione Prodotti</h2>
+    
+    <form method="get" class="mb-4">
+        <div class="row">
+            <div class="col-md-4">
+                <select name="category" class="form-select">
+                    <option value="">Tutte le categorie</option>
+                    {% for category in categories %}
+                        <option value="{{ category.slug }}" {% if category.slug = current_category %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-6">
+                <input type="text" name="q" class="form-control" placeholder="Cerca prodotti..." value="{{ query }}">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-brown w-100">Filtra</button>
+            </div>
+        </div>
+    </form>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Categoria</th>
+                <th>Prezzo</th>
+                <th>Stock</th>
+                <th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.category.name }}</td>
+                    <td>{{ product.price }} €</td>
+                    <td>{{ product.stock }}</td>
+                    <td>
+                        <a href="{% url 'shop:product_update' product.id %}" class="btn btn-sm btn-outline-primary">Modifica</a>
+                        <a href="{% url 'shop:product_delete' product.id %}" class="btn btn-sm btn-outline-danger">Elimina</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

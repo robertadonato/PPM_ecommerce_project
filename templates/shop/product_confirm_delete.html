@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Elimina Prodotto</h2>
+    <p>Sei sicuro di voler eliminare "{{ object.name }}"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Conferma Eliminazione</button>
+        <a href="{% url 'shop:manage_products' %}" class="btn btn-secondary">Annulla</a>
+    </form>
+</div>
+{% endblock %}
