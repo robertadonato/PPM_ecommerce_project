@@ -47,7 +47,7 @@
   "model": "accounts.customuser",
   "pk": 3,
   "fields": {
-    "password": "",
+    "password": "pbkdf2_sha256$1000000$9WpupgbDxiifvwcKcHuFpo$lsaQJpx/2+Ub4rBUTGapOL2gsxBFNonSJ81a/VnlQP0=",
     "last_login": null,
     "is_superuser": false,
     "username": "cliente1",
