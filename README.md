@@ -13,7 +13,7 @@ Un e-commerce completo sviluppato con Django per la vendita di dolci artigianali
 
 ## Demo Live
 
-**URL Deployment**:
+**URL Deployment**: https://dulcis-fabula.up.railway.app/
 
 ### Credenziali di Test:
 - **Admin**: `admin` / `dfgh781!`

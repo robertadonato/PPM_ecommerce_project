@@ -1,0 +1,68 @@
+[
+{
+  "model": "accounts.customuser",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$MxhpEG4SvmVAABhExMEGaR$di/9zMdvlbYv1tTBW25eloU8ac8/kd1+w2e1w3SC1W4=",
+    "last_login": null,
+    "is_superuser": true,
+    "username": "admin",
+    "first_name": "",
+    "last_name": "",
+    "email": "admin@example.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-07-10T11:45:10.266Z",
+    "phone_number": null,
+    "address": null,
+    "birth_date": null,
+    "is_store_manager": false,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.customuser",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$nglZO8LyQDPUjI4PFPOdxr$0U6hN4nqWsy7kj1kWZy/Im7rYkaSABE/OIYR7Q+8HD8=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "manager1",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-10T11:45:14.164Z",
+    "phone_number": null,
+    "address": null,
+    "birth_date": null,
+    "is_store_manager": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.customuser",
+  "pk": 3,
+  "fields": {
+    "password": "",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "cliente1",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-07-10T11:45:15.150Z",
+    "phone_number": null,
+    "address": null,
+    "birth_date": null,
+    "is_store_manager": false,
+    "groups": [],
+    "user_permissions": []
+  }
+}
+]
