@@ -20,7 +20,7 @@ Un e-commerce completo sviluppato con Django per la vendita di dolci artigianali
 - **Store Manager**: `manager1` / `manager123`  
 - **Cliente**: `cliente1` / `password123`
 
-## 🛠 Tecnologie Utilizzate
+## Tecnologie Utilizzate
 
 - **Backend**: Django 4.2.7
 - **Frontend**: Bootstrap 5, HTML5, CSS3, JavaScript
@@ -66,15 +66,15 @@ source venv/bin/activate  # Linux/Mac
 venv\Scripts\activate     # Windows
 
 3. **Installa dipendenze**
-pip install -r requirements/development.txt
+pip install -r requirements.txt
 
 4. **Configura database**
 python manage.py migrate
 python manage.py createsuperuser
 
 5. **Carica dati demo**
-python manage.py loaddata shop/fixtures/categories.json
-python manage.py loaddata shop/fixtures/products.json
+python manage.py loaddata fixtures.json
+python manage.py create_test_users
 
 6. **Avvia server**
 python manage.py runserver
