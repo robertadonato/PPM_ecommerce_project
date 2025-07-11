@@ -74,7 +74,7 @@ python manage.py createsuperuser
 
 5. **Carica dati demo**
 python manage.py loaddata fixtures.json
-python manage.py create_test_users
+python manage.py loaddata users_fixture.json
 
 6. **Avvia server**
 python manage.py runserver
